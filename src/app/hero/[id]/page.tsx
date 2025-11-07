@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import PersonGraph from "@/features/person-graph/components/PersonGraph";
-import { usePerson } from "@/features/people/api/queries";
+import { usePerson } from "@/features/api/queries";
 
 export default function PersonPage() {
   const { id } = useParams<{ id: string }>();

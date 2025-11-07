@@ -1,7 +1,7 @@
 import { makeAutoObservable, observable } from "mobx";
 import type { Edge, Node } from "reactflow";
 import { MarkerType } from "reactflow";
-import type { Film, Person, Starship } from "@/features/types/people.types";
+import type { Film, Person, Starship } from "@/features/types/types";
 
 export class GraphStore {
   nodes: Node[] = [];
@@ -19,29 +19,27 @@ export class GraphStore {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
-    // --- узел героя ---
     nodes.push({
       id: `p-${person.id}`,
       type: "hero",
-      position: { x: 0, y: 0 }, // временно, ниже расставим красиво
+      position: { x: 0, y: 0 },
       data: person,
     });
 
-    // --- фильмы + ребра hero -> film ---
-    for (const f of films) {
+    for (const film of films) {
       nodes.push({
-        id: `f-${f.id}`,
+        id: `f-${film.id}`,
         type: "film",
         position: { x: 0, y: 0 },
-        data: f,
+        data: film,
       });
 
       edges.push({
-        id: `e-p-${person.id}-f-${f.id}`,
+        id: `e-p-${person.id}-f-${film.id}`,
         source: `p-${person.id}`,
-        target: `f-${f.id}`,
-        sourceHandle: "out", // есть на HeroNode
-        targetHandle: "in", // есть на FilmNode
+        target: `f-${film.id}`,
+        sourceHandle: "out",
+        targetHandle: "in",
         type: "smoothstep",
         markerEnd: {
           type: MarkerType.ArrowClosed,
@@ -53,7 +51,6 @@ export class GraphStore {
       });
     }
 
-    // --- корабли + ребра hero -> ship (можешь потом поменять на film -> ship) ---
     for (const s of ships) {
       nodes.push({
         id: `s-${s.id}`,
@@ -66,8 +63,8 @@ export class GraphStore {
         id: `e-p-${person.id}-s-${s.id}`,
         source: `p-${person.id}`,
         target: `s-${s.id}`,
-        sourceHandle: "out", // есть на HeroNode
-        targetHandle: "in", // есть на ShipNode
+        sourceHandle: "out",
+        targetHandle: "in",
         type: "smoothstep",
         markerEnd: {
           type: MarkerType.ArrowClosed,
@@ -79,7 +76,6 @@ export class GraphStore {
       });
     }
 
-    // --- простая раскладка по слоям, чтобы не лежали стопкой ---
     const GAP_X = 280;
     const GAP_Y = 120;
 
@@ -102,7 +98,6 @@ export class GraphStore {
         i++;
       });
 
-    // --- одним экшеном в стор ---
     this.nodes = nodes;
     this.edges = edges;
   }

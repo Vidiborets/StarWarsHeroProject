@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useLayoutEffect, useRef, useState } from "react";
 
@@ -9,7 +10,7 @@ export default function LazyImage({
   wrapperClassName = "",
   className = "",
   src,
-  alt,
+  alt = "",
   onLoad,
   onError,
   ...rest
@@ -19,30 +20,23 @@ export default function LazyImage({
   const [isVisible, setIsVisible] = useState(false);
   const [showSkeleton, setShowSkeleton] = useState(true);
 
-  // Плавное «раскрытие»
   const reveal = () => {
-    // не дергаем layout лишний раз: сразу показываем, потом мягко скрываем скелет
     setIsVisible(true);
-    // короткая задержка — чтобы transition-opacity сработал мягко
     window.setTimeout(() => setShowSkeleton(false), 120);
   };
 
-  // Синхронная проверка кеша при маунте img — до эффекта
   const setImgRef = (el: HTMLImageElement | null) => {
     imgRef.current = el;
     if (!el) return;
-    // если уже закешировано — сразу показываем, не ждём эффекты/онлоады
     if (el.complete && el.naturalWidth > 0) {
       setIsVisible(true);
       setShowSkeleton(false);
     } else {
-      // новый источник — показываем скелет пока грузится
       setIsVisible(false);
       setShowSkeleton(true);
     }
   };
 
-  // Если src меняется — сбрасываем только если НОВЫЙ адрес
   useLayoutEffect(() => {
     const el = imgRef.current;
     if (!el) return;
@@ -76,7 +70,7 @@ export default function LazyImage({
   return (
     <div className={`relative ${wrapperClassName}`}>
       {showSkeleton && (
-        <div className="absolute inset-0 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800" />
+        <div className="absolute inset-0 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800 pointer-events-none" />
       )}
       <img
         ref={setImgRef}

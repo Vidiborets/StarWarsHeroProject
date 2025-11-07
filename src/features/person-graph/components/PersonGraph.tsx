@@ -3,12 +3,12 @@ import { useEffect, useMemo } from "react";
 import ReactFlow, { Background, Controls, MarkerType } from "reactflow";
 import "reactflow/dist/style.css";
 import { observer } from "mobx-react-lite";
-import { usePersonAggregate } from "../api/queries";
+import { usePersonAggregate } from "../../api/queries";
 import { GraphStore } from "../stores/GraphStores";
 import { nodeTypes } from "../../graph/nodes/index";
 
 const PersonGraph = observer(function PersonGraph({ id }: { id: number }) {
-  const agg = usePersonAggregate(id);
+  const agg = usePersonAggregate(id); // <- больше не триггерит второй запрос
   const store = useMemo(() => new GraphStore(), []);
 
   useEffect(() => {

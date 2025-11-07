@@ -1,3 +1,5 @@
+export type Film = { id: number; title: string; url: string };
+export type Starship = { id: number; name: string; url: string };
 export type Person = {
   id?: number;
   url?: string;
@@ -11,6 +13,3 @@ export type PeoplePage = {
   previous: string | null;
   results: Person[];
 };
-
-export type Film = { id: number; title: string; url: string };
-export type Starship = { id: number; name: string; url: string };

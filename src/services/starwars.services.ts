@@ -5,7 +5,7 @@ import type {
   Person,
   Film,
   Starship,
-} from "@/features/types/people.types";
+} from "@/features/types/types";
 import { getIdFromUrl } from "../utils/lib";
 
 const BASE_URL = ENV.SWAPI_BASE_URL;
