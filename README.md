@@ -36,6 +36,8 @@ Tooling: TypeScript 5, ESLint (next config), concurrently, wait-on, open-cli
 📦 Project Structure
 
 Feature-first (Bulletproof) layout with domain co-location.
+<details>
+<summary><strong>Project structure</strong></summary>
 
 src
 ├─ app
@@ -43,57 +45,69 @@ src
 │  │  └─ images
 │  │     └─ character
 │  │        └─ [id]
-│  │           └─ route.ts          # Image proxy/route
+│  │           └─ route.ts             # Image proxy/route
 │  ├─ hero
 │  │  └─ [id]
-│  │     └─ page.tsx                # Person detail page
+│  │     └─ page.tsx                   # Person detail page
 │  ├─ layout.tsx
-│  ├─ page.tsx                      # People list page
-│  ├─ provider.tsx                  # App providers (React Query, etc.)
-│  └─ globals.css                   # Global styles (Tailwind)
+│  ├─ page.tsx                         # People list page
+│  ├─ provider.tsx                     # App providers (React Query, etc.)
+│  └─ globals.css                      # Global styles (Tailwind)
+│
 ├─ components
 │  ├─ Header/
 │  ├─ Logo/
 │  ├─ LazyImage.tsx
 │  └─ Skeleton.tsx
+│
 ├─ config
 │  └─ env.ts
+│
 ├─ features
 │  ├─ api
-│  │  └─ queries.ts                 # react-query hooks (person, aggregate, etc.)
+│  │  └─ queries.ts                    # react-query hooks (person, aggregate, etc.)
+│  │
 │  ├─ graph
-│  │  └─ nodes                      # React Flow custom nodes
+│  │  └─ nodes                         # React Flow custom nodes
 │  │     ├─ FilmNode.tsx
 │  │     ├─ HeroNode.tsx
 │  │     ├─ ShipNode.tsx
 │  │     └─ index.tsx
+│  │
 │  ├─ people
 │  │  ├─ api
-│  │  │  └─ queries.ts              # People list infinite query hooks
+│  │  │  └─ queries.ts                 # People list infinite query hooks
 │  │  └─ components
 │  │     ├─ HeroCard.tsx
 │  │     └─ PeopleList.tsx
+│  │
 │  └─ person-graph
 │     ├─ components
 │     │  └─ PersonGraph.tsx
 │     └─ stores
-│        └─ GraphStores.ts          # MobX store (nodes/edges builder)
+│        └─ GraphStores.ts             # MobX store (nodes/edges builder)
+│
 ├─ lib
-│  └─ http.ts                       # Fetch wrapper
+│  └─ http.ts                          # Fetch wrapper
+│
 ├─ services
-│  └─ starwars.services.ts          # SWAPI calls
+│  └─ starwars.services.ts             # SWAPI calls
+│
 ├─ stores
 │  ├─ PeopleStore.ts
-│  └─ RootStores.ts                 # (reserved for future global stores)
+│  └─ RootStores.ts                    # (reserved for future global stores)
+│
 ├─ types
-│  └─ types.ts                      # Person, Film, Starship, etc.
+│  └─ types.ts                         # Person, Film, Starship, etc.
+│
 └─ test
    ├─ mocks
-   │  ├─ LazyImage.tsx              # test-only mock
-   │  └─ link.tsx                   # test-only mock for next/link
+   │  ├─ LazyImage.tsx                 # test-only mock
+   │  └─ link.tsx                      # test-only mock for next/link
    ├─ HeroCard.test.tsx
    ├─ PeopleList.test.tsx
    └─ PersonGraph.test.tsx
+</details> 
 
 Why this structure?
 
