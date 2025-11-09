@@ -2,7 +2,7 @@
 import Link from "next/link";
 import PeopleList from "@/features/people/components/PeopleList";
 
-export default function HomePage() {
+const HomePage = () => {
   return (
     <main className="container py-6">
       <header className="mb-6 flex items-center justify-between">
@@ -14,4 +14,6 @@ export default function HomePage() {
       <PeopleList />
     </main>
   );
-}
+};
+
+export default HomePage;

@@ -1,48 +1,44 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
+import { LazyImageProps } from "@/features/types/types";
 import { useLayoutEffect, useRef, useState } from "react";
 
-type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
-  wrapperClassName?: string;
-};
-
-export default function LazyImage({
+// Use skeleton and lazy image dowload
+const LazyImage = ({
   wrapperClassName = "",
   className = "",
   src,
-  alt,
+  alt = "",
   onLoad,
   onError,
   ...rest
-}: Props) {
+}: LazyImageProps) => {
+  // Create ref for use current link image
   const imgRef = useRef<HTMLImageElement | null>(null);
 
+  // State for dispalyed skeleton image
   const [isVisible, setIsVisible] = useState(false);
   const [showSkeleton, setShowSkeleton] = useState(true);
 
-  // Плавное «раскрытие»
   const reveal = () => {
-    // не дергаем layout лишний раз: сразу показываем, потом мягко скрываем скелет
     setIsVisible(true);
-    // короткая задержка — чтобы transition-opacity сработал мягко
     window.setTimeout(() => setShowSkeleton(false), 120);
   };
 
-  // Синхронная проверка кеша при маунте img — до эффекта
+  // Use cashe image
   const setImgRef = (el: HTMLImageElement | null) => {
     imgRef.current = el;
     if (!el) return;
-    // если уже закешировано — сразу показываем, не ждём эффекты/онлоады
     if (el.complete && el.naturalWidth > 0) {
       setIsVisible(true);
       setShowSkeleton(false);
     } else {
-      // новый источник — показываем скелет пока грузится
       setIsVisible(false);
       setShowSkeleton(true);
     }
   };
 
-  // Если src меняется — сбрасываем только если НОВЫЙ адрес
+  // Layout effect for download image before page is create in DOM
   useLayoutEffect(() => {
     const el = imgRef.current;
     if (!el) return;
@@ -52,13 +48,15 @@ export default function LazyImage({
       setIsVisible(false);
       setShowSkeleton(true);
     } else if (el.complete && el.naturalWidth > 0) {
-      // тот же src и он уже в кеше
       setIsVisible(true);
       setShowSkeleton(false);
     }
   }, [src]);
 
-  async function handleLoad(e: React.SyntheticEvent<HTMLImageElement, Event>) {
+  // Handle download image
+  const handleLoad = async (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
     const el = e.currentTarget;
     try {
       if ("decode" in el) {
@@ -67,16 +65,17 @@ export default function LazyImage({
     } catch {}
     reveal();
     onLoad?.(e);
-  }
+  };
 
-  function handleError(e: React.SyntheticEvent<HTMLImageElement, Event>) {
+  // Function for error
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     onError?.(e);
-  }
+  };
 
   return (
     <div className={`relative ${wrapperClassName}`}>
       {showSkeleton && (
-        <div className="absolute inset-0 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800" />
+        <div className="absolute inset-0 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800 pointer-events-none" />
       )}
       <img
         ref={setImgRef}
@@ -96,4 +95,6 @@ export default function LazyImage({
       />
     </div>
   );
-}
+};
+
+export default LazyImage;

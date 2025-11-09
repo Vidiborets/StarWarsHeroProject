@@ -3,7 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 import { RootStore, RootStoreContext } from "@/stores/RootStores";
 
-export default function Provider({ children }: { children: ReactNode }) {
+// Use react query for cash results
+const Provider = ({ children }: { children: ReactNode }) => {
+  // State for safe result react-query response
   const [qc] = useState(() => new QueryClient());
   const [root] = useState(() => new RootStore());
   return (
@@ -11,4 +13,6 @@ export default function Provider({ children }: { children: ReactNode }) {
       <QueryClientProvider client={qc}>{children}</QueryClientProvider>
     </RootStoreContext.Provider>
   );
-}
+};
+
+export default Provider;

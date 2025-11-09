@@ -1,145 +1,101 @@
 "use client";
-import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePeopleInfinite } from "../api/queries";
 import { ensureId } from "@/utils/lib";
-import LazyImage from "@/components/LazyImage";
 import { CardSkeleton } from "@/components/Skeleton";
+import HeroCard from "./HeroCard";
 
-import type { ReactNode } from "react";
-
-function Grid({ children }: { children: ReactNode }) {
+// HOK
+const Grid = ({ children }: { children: ReactNode }) => {
   return (
     <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
       {children}
     </ul>
   );
-}
+};
 
-export default function PeopleList() {
-  const ioRef = useRef<HTMLDivElement | null>(null);
-  const q = usePeopleInfinite();
+const PeopleList = () => {
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  // Retrun result in hooks Infinit query hooks
+  const {
+    data,
+    isLoading,
+    isPending,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    isError,
+  } = usePeopleInfinite();
 
-  // 1) people мемоизируем по q.data (а не создаём новый массив на каждый рендер)
+  // Memorise peaople result
   const people = useMemo(
-    () => q.data?.pages.flatMap((p) => p.results) ?? [],
-    [q.data]
+    () => data?.pages.flatMap((p) => p.results) ?? [],
+    [data]
   );
 
-  // 2) Держим видимый список в состоянии, но обновляем его только при реальном изменении
   const [visiblePeople, setVisiblePeople] = useState<typeof people>([]);
   const [hasAnyData, setHasAnyData] = useState(false);
+  const [inView, setInView] = useState(false);
 
   useEffect(() => {
-    if (people.length === 0) return;
-
-    // простая проверка «изменилось ли содержимое» (по id)
-    const sameLen = visiblePeople.length === people.length;
-    const sameItems =
-      sameLen &&
-      visiblePeople.every((v, i) => ensureId(v) === ensureId(people[i]));
-
-    if (!sameItems) {
-      setVisiblePeople(people);
-      setHasAnyData(true);
+    if (people.length > 0) {
+      const sameLen = visiblePeople.length === people.length;
+      const same =
+        sameLen &&
+        visiblePeople.every((v, i) => ensureId(v) === ensureId(people[i]));
+      if (!same) {
+        setVisiblePeople(people);
+        setHasAnyData(true);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [people]); // зависим только от people (visiblePeople учитывать не нужно — мы сравниваем внутри)
+  }, [people]);
 
-  // 3) Скелет показываем только до первой успешной загрузки
-  const showInitialSkeleton = !hasAnyData && q.isLoading;
+  const showInitialSkeleton = !hasAnyData && (isLoading || isPending);
 
-  // 4) IntersectionObserver создаём один раз; читаем актуальные флаги/функцию из ref
-  const flagsRef = useRef({
-    hasNextPage: !!q.hasNextPage,
-    isFetchingNextPage: !!q.isFetchingNextPage,
-  });
-  const fetchNextRef = useRef(q.fetchNextPage);
-
+  // Use effect to create response with IntersectionObserver
   useEffect(() => {
-    flagsRef.current = {
-      hasNextPage: !!q.hasNextPage,
-      isFetchingNextPage: !!q.isFetchingNextPage,
-    };
-  }, [q.hasNextPage, q.isFetchingNextPage]);
-
-  useEffect(() => {
-    fetchNextRef.current = q.fetchNextPage;
-  }, [q.fetchNextPage]);
-
-  useEffect(() => {
-    const el = ioRef.current;
+    const el = sentinelRef.current;
     if (!el) return;
 
     const io = new IntersectionObserver(
-      (entries) => {
-        if (!entries[0].isIntersecting) return;
-        const { hasNextPage, isFetchingNextPage } = flagsRef.current;
-        if (hasNextPage && !isFetchingNextPage) {
-          fetchNextRef.current();
-        }
-      },
-      { rootMargin: "600px" }
+      (entries) => setInView(entries[0]?.isIntersecting ?? false),
+      { rootMargin: "100px" }
     );
 
     io.observe(el);
     return () => io.disconnect();
-  }, []); // создаём/удаляем 1 раз
+  }, [people.length]);
 
-  if (q.isError) {
+  // Use effect for displayed next people stream
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
+
+  if (isError) {
     return <div className="card text-red-600">Failed to load heroes.</div>;
-  }
-
-  if (showInitialSkeleton) {
-    return (
-      <>
-        <Grid>
-          {Array.from({ length: 12 }).map((_, i) => (
-            <CardSkeleton key={i} />
-          ))}
-        </Grid>
-        <div className="h-4" />
-      </>
-    );
   }
 
   return (
     <>
       <Grid>
-        {visiblePeople.map((p) => {
-          const id = ensureId(p);
-          return (
-            <li key={id} className="card">
-              <div className="aspect-[3/4] w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
-                <LazyImage
-                  wrapperClassName="w-full h-full"
-                  className="rounded-xl"
-                  src={`/api/images/character/${id}?name=${encodeURIComponent(
-                    p.name
-                  )}`}
-                  alt={p.name}
-                />
-              </div>
-              <div className="mt-3 flex items-center justify-between">
-                <strong className="text-lg truncate max-w-[70%]">
-                  {p.name}
-                </strong>
-                <Link className="btn" href={`/hero/${id}`}>
-                  Open
-                </Link>
-              </div>
-            </li>
-          );
-        })}
+        {showInitialSkeleton
+          ? Array.from({ length: 12 }).map((_, i) => <CardSkeleton key={i} />)
+          : visiblePeople.map((p) => <HeroCard key={ensureId(p)} p={p} />)}
       </Grid>
 
-      <div ref={ioRef} className="h-8" />
-      {q.isFetchingNextPage && (
+      <div ref={sentinelRef} className="h-8" />
+
+      {isFetchingNextPage && (
         <p className="mt-2 text-center text-sm opacity-70">Loading…</p>
       )}
-      {!q.hasNextPage && visiblePeople.length > 0 && (
+      {!hasNextPage && hasAnyData && (
         <p className="mt-2 text-center text-sm opacity-70">No more heroes.</p>
       )}
     </>
   );
-}
+};
+
+export default PeopleList;
