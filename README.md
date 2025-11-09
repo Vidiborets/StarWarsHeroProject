@@ -37,42 +37,63 @@ Tooling: TypeScript 5, ESLint (next config), concurrently, wait-on, open-cli
 
 Feature-first (Bulletproof) layout with domain co-location.
 
-src/
-  app/
-    api/images/character/[id]/route.ts   # image proxy/route
-    hero/[id]/page.tsx                   # person detail page
-    layout.tsx, page.tsx, provider.tsx   # app shell
-    globals.css                          # global styles
-  components/
-    Header/..., Logo/..., LazyImage.tsx, Skeleton.tsx
-  config/
-    env.ts
-  features/
-    api/queries.ts                       # react-query hooks (person, aggregate, etc.)
-    graph/nodes/                         # React Flow custom nodes
-      FilmNode.tsx, HeroNode.tsx, ShipNode.tsx, index.tsx
-    people/
-      api/queries.ts                     # people list infinite query hooks
-      components/HeroCard.tsx
-      components/PeopleList.tsx
-    person-graph/
-      components/PersonGraph.tsx
-      stores/GraphStores.ts              # MobX store for graph (nodes/edges)
-    types/types.ts                       # Person, Film, Starship, etc.
-  lib/
-    http.ts                              # fetch wrapper
-  services/
-    starwars.services.ts                 # SWAPI calls
-  stores/
-    PeopleStore.ts, RootStores.ts        # (if/when used globally)
-  test/
-    mocks/
-      LazyImage.tsx                      # test-only mock
-      link.tsx                           # test-only mock for next/link
-    HeroCard.test.tsx
-    PeopleList.test.tsx
-    PersonGraph.test.tsx
-
+src
+├─ app
+│  ├─ api
+│  │  └─ images
+│  │     └─ character
+│  │        └─ [id]
+│  │           └─ route.ts          # Image proxy/route
+│  ├─ hero
+│  │  └─ [id]
+│  │     └─ page.tsx                # Person detail page
+│  ├─ layout.tsx
+│  ├─ page.tsx                      # People list page
+│  ├─ provider.tsx                  # App providers (React Query, etc.)
+│  └─ globals.css                   # Global styles (Tailwind)
+├─ components
+│  ├─ Header/
+│  ├─ Logo/
+│  ├─ LazyImage.tsx
+│  └─ Skeleton.tsx
+├─ config
+│  └─ env.ts
+├─ features
+│  ├─ api
+│  │  └─ queries.ts                 # react-query hooks (person, aggregate, etc.)
+│  ├─ graph
+│  │  └─ nodes                      # React Flow custom nodes
+│  │     ├─ FilmNode.tsx
+│  │     ├─ HeroNode.tsx
+│  │     ├─ ShipNode.tsx
+│  │     └─ index.tsx
+│  ├─ people
+│  │  ├─ api
+│  │  │  └─ queries.ts              # People list infinite query hooks
+│  │  └─ components
+│  │     ├─ HeroCard.tsx
+│  │     └─ PeopleList.tsx
+│  └─ person-graph
+│     ├─ components
+│     │  └─ PersonGraph.tsx
+│     └─ stores
+│        └─ GraphStores.ts          # MobX store (nodes/edges builder)
+├─ lib
+│  └─ http.ts                       # Fetch wrapper
+├─ services
+│  └─ starwars.services.ts          # SWAPI calls
+├─ stores
+│  ├─ PeopleStore.ts
+│  └─ RootStores.ts                 # (reserved for future global stores)
+├─ types
+│  └─ types.ts                      # Person, Film, Starship, etc.
+└─ test
+   ├─ mocks
+   │  ├─ LazyImage.tsx              # test-only mock
+   │  └─ link.tsx                   # test-only mock for next/link
+   ├─ HeroCard.test.tsx
+   ├─ PeopleList.test.tsx
+   └─ PersonGraph.test.tsx
 
 Why this structure?
 
