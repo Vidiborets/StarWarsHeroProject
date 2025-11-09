@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { sw } from "@/services/starwars.services";
 import type { Film, Starship, Person } from "../types/types";
 
-export function usePerson(id: number) {
+// Use react-query hooks for person
+export const usePerson = (id: number) => {
   return useQuery<Person>({
     queryKey: ["person", id],
     enabled: Number.isFinite(id) && id > 0,
@@ -16,13 +17,15 @@ export function usePerson(id: number) {
     refetchOnReconnect: false,
     retry: 0,
   });
-}
+};
 
-export function usePersonFilms(person: Person | undefined) {
+// Use react-query hooks for person-films
+export const usePersonFilms = (person: Person | undefined) => {
+  const filmIds = person?.films ?? [];
   return useQuery<Film[]>({
-    queryKey: ["person-films", person?.id],
-    enabled: !!person && person.films.length > 0,
-    queryFn: () => sw.getFilms(person!.films),
+    queryKey: ["person-films", person?.id, filmIds],
+    enabled: !!person && filmIds.length > 0,
+    queryFn: () => sw.getFilms(filmIds),
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnMount: false,
@@ -30,13 +33,15 @@ export function usePersonFilms(person: Person | undefined) {
     refetchOnReconnect: false,
     retry: 0,
   });
-}
+};
 
-export function usePersonShips(person: Person | undefined) {
+// Use react-query hooks for person-ships
+export const usePersonShips = (person: Person | undefined) => {
+  const shipIds = person?.starships ?? [];
   return useQuery<Starship[]>({
-    queryKey: ["person-ships", person?.id],
-    enabled: !!person && person.starships.length > 0,
-    queryFn: () => sw.getStarships(person!.starships),
+    queryKey: ["person-ships", person?.id, shipIds],
+    enabled: !!person && shipIds.length > 0,
+    queryFn: () => sw.getStarships(shipIds),
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnMount: false,
@@ -44,9 +49,10 @@ export function usePersonShips(person: Person | undefined) {
     refetchOnReconnect: false,
     retry: 0,
   });
-}
+};
 
-export function usePersonAggregate(id: number) {
+// Use react-query hooks for person-Aggregate
+export const usePersonAggregate = (id: number) => {
   const personQ = usePerson(id);
   const filmsQ = usePersonFilms(personQ.data);
   const shipsQ = usePersonShips(personQ.data);
@@ -68,4 +74,4 @@ export function usePersonAggregate(id: number) {
     isLoading,
     isError,
   };
-}
+};

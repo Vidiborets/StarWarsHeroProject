@@ -3,6 +3,7 @@ import type { Edge, Node } from "reactflow";
 import { MarkerType } from "reactflow";
 import type { Film, Person, Starship } from "@/features/types/types";
 
+// Class with mobx store to save result response
 export class GraphStore {
   nodes: Node[] = [];
   edges: Edge[] = [];
@@ -15,6 +16,7 @@ export class GraphStore {
     );
   }
 
+  // Custom create nodes
   buildGraph(person: Person, films: Film[], ships: Starship[]) {
     const nodes: Node[] = [];
     const edges: Edge[] = [];

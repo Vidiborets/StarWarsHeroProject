@@ -1,12 +1,14 @@
-export function Skeleton({ className = "" }: { className?: string }) {
+// Function for return Skeleton
+export const Skeleton = ({ className = "" }: { className?: string }) => {
   return (
     <div
       className={`animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800 ${className}`}
     />
   );
-}
+};
 
-export function CardSkeleton() {
+// Function for retrun CardSkeleton markUp
+export const CardSkeleton = () => {
   return (
     <li className="card">
       <div className="aspect-[3/4] w-full overflow-hidden rounded-xl">
@@ -18,4 +20,4 @@ export function CardSkeleton() {
       </div>
     </li>
   );
-}
+};

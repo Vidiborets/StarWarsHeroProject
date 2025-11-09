@@ -1,22 +1,22 @@
 "use client";
-import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePeopleInfinite } from "../api/queries";
 import { ensureId } from "@/utils/lib";
-import LazyImage from "@/components/LazyImage";
 import { CardSkeleton } from "@/components/Skeleton";
-import type { ReactNode } from "react";
+import HeroCard from "./HeroCard";
 
-function Grid({ children }: { children: ReactNode }) {
+// HOK
+const Grid = ({ children }: { children: ReactNode }) => {
   return (
     <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
       {children}
     </ul>
   );
-}
+};
 
-export default function PeopleList() {
+const PeopleList = () => {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  // Retrun result in hooks Infinit query hooks
   const {
     data,
     isLoading,
@@ -27,6 +27,7 @@ export default function PeopleList() {
     isError,
   } = usePeopleInfinite();
 
+  // Memorise peaople result
   const people = useMemo(
     () => data?.pages.flatMap((p) => p.results) ?? [],
     [data]
@@ -34,6 +35,7 @@ export default function PeopleList() {
 
   const [visiblePeople, setVisiblePeople] = useState<typeof people>([]);
   const [hasAnyData, setHasAnyData] = useState(false);
+  const [inView, setInView] = useState(false);
 
   useEffect(() => {
     if (people.length > 0) {
@@ -51,8 +53,7 @@ export default function PeopleList() {
 
   const showInitialSkeleton = !hasAnyData && (isLoading || isPending);
 
-  const [inView, setInView] = useState(false);
-
+  // Use effect to create response with IntersectionObserver
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
@@ -66,6 +67,7 @@ export default function PeopleList() {
     return () => io.disconnect();
   }, [people.length]);
 
+  // Use effect for displayed next people stream
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -81,35 +83,9 @@ export default function PeopleList() {
       <Grid>
         {showInitialSkeleton
           ? Array.from({ length: 12 }).map((_, i) => <CardSkeleton key={i} />)
-          : visiblePeople.map((p) => {
-              const id = ensureId(p);
-              return (
-                <li key={id} className="card">
-                  {/* делаем кликабельной всю картинку */}
-                  <Link href={`/hero/${id}`} prefetch={false} className="block">
-                    <div className="aspect-[3/4] w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
-                      <LazyImage
-                        wrapperClassName="w-full h-full"
-                        className="rounded-xl"
-                        src={`/api/images/character/${id}?name=${encodeURIComponent(
-                          p.name
-                        )}`}
-                        alt={p.name}
-                      />
-                    </div>
-                  </Link>
-
-                  <div className="mt-3 flex items-center justify-between">
-                    <strong className="text-lg truncate max-w-[70%]">
-                      {p.name}
-                    </strong>
-                  </div>
-                </li>
-              );
-            })}
+          : visiblePeople.map((p) => <HeroCard key={ensureId(p)} p={p} />)}
       </Grid>
 
-      {/* Сентинел ВСЕГДА в DOM, даже во время скелетов */}
       <div ref={sentinelRef} className="h-8" />
 
       {isFetchingNextPage && (
@@ -120,4 +96,6 @@ export default function PeopleList() {
       )}
     </>
   );
-}
+};
+
+export default PeopleList;

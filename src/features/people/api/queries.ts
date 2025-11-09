@@ -3,14 +3,15 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { sw } from "@/services/starwars.services";
 import type { PeoplePage } from "../../types/types";
 
-export const qk = {
+export const queryKey = {
   people: ["people"] as const,
   person: (id: number) => ["person", id] as const,
 };
 
-export function usePeopleInfinite() {
+// Use hooks for InfinityScrool
+export const usePeopleInfinite = () => {
   return useInfiniteQuery<PeoplePage>({
-    queryKey: qk.people,
+    queryKey: queryKey.people,
     queryFn: (context) => sw.getPeople(context.pageParam as number),
     getNextPageParam: (last) => {
       if (!last.next) return undefined;
@@ -25,4 +26,4 @@ export function usePeopleInfinite() {
     refetchOnMount: false,
     placeholderData: (prev) => prev,
   });
-}
+};

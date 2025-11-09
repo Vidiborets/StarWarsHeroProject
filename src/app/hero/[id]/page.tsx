@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import PersonGraph from "@/features/person-graph/components/PersonGraph";
 import { usePerson } from "@/features/api/queries";
 
-export default function PersonPage() {
+const PersonPage = () => {
   const { id } = useParams<{ id: string }>();
   const numId = Number(id);
   const personQ = usePerson(numId);
@@ -23,4 +23,5 @@ export default function PersonPage() {
       <PersonGraph id={numId} />
     </main>
   );
-}
+};
+export default PersonPage;

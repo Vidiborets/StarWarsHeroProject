@@ -1,12 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
+import { LazyImageProps } from "@/features/types/types";
 import { useLayoutEffect, useRef, useState } from "react";
 
-type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
-  wrapperClassName?: string;
-};
-
-export default function LazyImage({
+// Use skeleton and lazy image dowload
+const LazyImage = ({
   wrapperClassName = "",
   className = "",
   src,
@@ -14,9 +12,11 @@ export default function LazyImage({
   onLoad,
   onError,
   ...rest
-}: Props) {
+}: LazyImageProps) => {
+  // Create ref for use current link image
   const imgRef = useRef<HTMLImageElement | null>(null);
 
+  // State for dispalyed skeleton image
   const [isVisible, setIsVisible] = useState(false);
   const [showSkeleton, setShowSkeleton] = useState(true);
 
@@ -25,6 +25,7 @@ export default function LazyImage({
     window.setTimeout(() => setShowSkeleton(false), 120);
   };
 
+  // Use cashe image
   const setImgRef = (el: HTMLImageElement | null) => {
     imgRef.current = el;
     if (!el) return;
@@ -37,6 +38,7 @@ export default function LazyImage({
     }
   };
 
+  // Layout effect for download image before page is create in DOM
   useLayoutEffect(() => {
     const el = imgRef.current;
     if (!el) return;
@@ -46,13 +48,15 @@ export default function LazyImage({
       setIsVisible(false);
       setShowSkeleton(true);
     } else if (el.complete && el.naturalWidth > 0) {
-      // тот же src и он уже в кеше
       setIsVisible(true);
       setShowSkeleton(false);
     }
   }, [src]);
 
-  async function handleLoad(e: React.SyntheticEvent<HTMLImageElement, Event>) {
+  // Handle download image
+  const handleLoad = async (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
     const el = e.currentTarget;
     try {
       if ("decode" in el) {
@@ -61,11 +65,12 @@ export default function LazyImage({
     } catch {}
     reveal();
     onLoad?.(e);
-  }
+  };
 
-  function handleError(e: React.SyntheticEvent<HTMLImageElement, Event>) {
+  // Function for error
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     onError?.(e);
-  }
+  };
 
   return (
     <div className={`relative ${wrapperClassName}`}>
@@ -90,4 +95,6 @@ export default function LazyImage({
       />
     </div>
   );
-}
+};
+
+export default LazyImage;
