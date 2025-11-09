@@ -36,9 +36,12 @@ Tooling: TypeScript 5, ESLint (next config), concurrently, wait-on, open-cli
 📦 Project Structure
 
 Feature-first (Bulletproof) layout with domain co-location.
-<details>
-<summary><strong>Project structure</strong></summary>
+## Project structure
 
+<details>
+<summary><strong>Click to expand</strong></summary>
+
+```text
 src
 ├─ app
 │  ├─ api
@@ -107,7 +110,7 @@ src
    ├─ HeroCard.test.tsx
    ├─ PeopleList.test.tsx
    └─ PersonGraph.test.tsx
-</details> 
+</details> ```
 
 Why this structure?
 
