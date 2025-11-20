@@ -159,7 +159,6 @@ class MockIntersectionObserver implements IntersectionObserver {
 
 const __ioInstances = new Set<MockIntersectionObserver>();
 
-// Подменяем глобальный IO
 global.IntersectionObserver = MockIntersectionObserver;
 
 export function triggerInView(isIntersecting: boolean): void {
