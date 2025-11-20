@@ -21,11 +21,12 @@ export const usePerson = (id: number) => {
 
 // Use react-query hooks for person-films
 export const usePersonFilms = (person: Person | undefined) => {
-  const filmIds = person?.films ?? [];
+  const personId = person?.id;
+
   return useQuery<Film[]>({
-    queryKey: ["person-films", person?.id, filmIds],
-    enabled: !!person && filmIds.length > 0,
-    queryFn: () => sw.getFilms(filmIds),
+    queryKey: ["person-films", personId],
+    enabled: !!personId,
+    queryFn: () => sw.getFilmsByCharacter(personId!),
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnMount: false,
@@ -37,11 +38,12 @@ export const usePersonFilms = (person: Person | undefined) => {
 
 // Use react-query hooks for person-ships
 export const usePersonShips = (person: Person | undefined) => {
-  const shipIds = person?.starships ?? [];
+  const personId = person?.id;
+
   return useQuery<Starship[]>({
-    queryKey: ["person-ships", person?.id, shipIds],
-    enabled: !!person && shipIds.length > 0,
-    queryFn: () => sw.getStarships(shipIds),
+    queryKey: ["person-ships", personId],
+    enabled: !!personId,
+    queryFn: () => sw.getStarshipsByPilot(personId!),
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnMount: false,

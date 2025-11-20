@@ -1,7 +1,7 @@
 import { makeAutoObservable, observable } from "mobx";
 import type { Edge, Node } from "reactflow";
-import { MarkerType } from "reactflow";
 import type { Film, Person, Starship } from "@/features/types/types";
+import { createHeroEdge } from "@/features/person-graph/utils";
 
 // Class with mobx store to save result response
 export class GraphStore {
@@ -36,46 +36,30 @@ export class GraphStore {
         data: film,
       });
 
-      edges.push({
-        id: `e-p-${person.id}-f-${film.id}`,
-        source: `p-${person.id}`,
-        target: `f-${film.id}`,
-        sourceHandle: "out",
-        targetHandle: "in",
-        type: "smoothstep",
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 22,
-          height: 22,
-          color: "#94a3b8",
-        },
-        style: { strokeWidth: 1.8, stroke: "#94a3b8" },
-      });
+      edges.push(
+        createHeroEdge({
+          personId: person.id,
+          targetId: film.id,
+          targetType: "f",
+        })
+      );
     }
 
-    for (const s of ships) {
+    for (const ship of ships) {
       nodes.push({
-        id: `s-${s.id}`,
+        id: `s-${ship.id}`,
         type: "ship",
         position: { x: 0, y: 0 },
-        data: s,
+        data: ship,
       });
 
-      edges.push({
-        id: `e-p-${person.id}-s-${s.id}`,
-        source: `p-${person.id}`,
-        target: `s-${s.id}`,
-        sourceHandle: "out",
-        targetHandle: "in",
-        type: "smoothstep",
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 22,
-          height: 22,
-          color: "#94a3b8",
-        },
-        style: { strokeWidth: 1.8, stroke: "#94a3b8" },
-      });
+      edges.push(
+        createHeroEdge({
+          personId: person.id,
+          targetId: ship.id,
+          targetType: "s",
+        })
+      );
     }
 
     const GAP_X = 280;

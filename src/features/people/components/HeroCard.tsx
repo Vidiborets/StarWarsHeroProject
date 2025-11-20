@@ -19,10 +19,11 @@ function HeroCard({ p }: { p: Person }) {
   return (
     <li
       key={id}
-      className="card group relative overflow-hidden rounded-xl bg-neutral-900/40 border border-red-600/20 hover:border-red-500/50 transition">
+      className="card group relative overflow-hidden rounded-xl bg-neutral-900/40 border border-red-600/20 hover:border-red-500/50 transition"
+    >
       {/* clickable area = image */}
       <Link href={`/hero/${id}`} prefetch={false} className="block">
-        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl">
+        <div className="relative aspect-3/4 w-full overflow-hidden rounded-xl">
           <LazyImage
             wrapperClassName="w-full h-full"
             className="rounded-xl"
@@ -40,7 +41,8 @@ function HeroCard({ p }: { p: Person }) {
               translate-y-3 opacity-0
               group-hover:translate-y-0 group-hover:opacity-100
               transition-all duration-300 ease-out
-            ">
+            "
+          >
             <div
               className="
                 mx-2 mb-2 rounded-lg
@@ -48,7 +50,8 @@ function HeroCard({ p }: { p: Person }) {
                 border border-red-500/40
                 shadow-[0_0_20px_rgba(229,9,17,0.35)]
                 text-red-50
-              ">
+              "
+            >
               <div className="px-3 pt-2">
                 <p className="text-sm font-semibold tracking-wide text-red-400">
                   {p.name}
@@ -57,16 +60,16 @@ function HeroCard({ p }: { p: Person }) {
               <div className="px-3 pb-2 pt-1 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] leading-5">
                 <DataRow label="Height" value={p.height} />
                 <DataRow label="Mass" value={p.mass} />
-                <DataRow label="Hair" value={p.hair_color} />
-                <DataRow label="Skin" value={p.skin_color} />
-                <DataRow label="Eyes" value={p.eye_color} />
-                <DataRow label="Birth" value={p.birth_year} />
+                <DataRow label="Hair" value={p.hairColor} />
+                <DataRow label="Skin" value={p.skinColor} />
+                <DataRow label="Eyes" value={p.eyeColor} />
+                <DataRow label="Birth" value={p.birthYear} />
                 <DataRow label="Gender" value={p.gender} />
                 <DataRow label="Films" value={p.films?.length} />
               </div>
 
               {/* line */}
-              <div className="h-px w-full bg-gradient-to-r from-transparent via-red-500/60 to-transparent" />
+              <div className="h-px w-full bg-linear-to-r from-transparent via-red-500/60 to-transparent" />
             </div>
           </div>
         </div>

@@ -1,6 +1,5 @@
 import * as React from "react";
-import { render, screen } from "@testing-library/react";
-import { act } from "@testing-library/react";
+import { render } from "@testing-library/react";
 
 jest.mock(require.resolve("../features/api/queries"), () => ({
   __esModule: true,
@@ -98,14 +97,18 @@ describe("PersonGraph", () => {
 
   it("shows loading state", () => {
     mockAggregate = { data: undefined, isLoading: true, isError: false };
-    render(<PersonGraph id={21} />);
-    expect(screen.getByText(/Loading…/i)).toBeInTheDocument();
+
+    const { getByText } = render(<PersonGraph id={21} />);
+
+    expect(getByText(/Loading…/i)).toBeInTheDocument();
   });
 
   it("shows error state", () => {
     mockAggregate = { data: undefined, isLoading: false, isError: true };
-    render(<PersonGraph id={21} />);
-    expect(screen.getByText(/Failed to load details\./i)).toBeInTheDocument();
+
+    const { getByText } = render(<PersonGraph id={21} />);
+
+    expect(getByText(/Failed to load details\./i)).toBeInTheDocument();
   });
 
   it("calls store.buildGraph when data arrives", () => {
@@ -134,10 +137,12 @@ describe("PersonGraph", () => {
       isLoading: false,
       isError: false,
     };
-    render(<PersonGraph id={1} />);
-    expect(screen.getByTestId("reactflow")).toBeInTheDocument();
-    expect(screen.getByTestId("rf-background")).toBeInTheDocument();
-    expect(screen.getByTestId("rf-controls")).toHaveAttribute(
+
+    const { getByTestId } = render(<PersonGraph id={1} />);
+
+    expect(getByTestId("reactflow")).toBeInTheDocument();
+    expect(getByTestId("rf-background")).toBeInTheDocument();
+    expect(getByTestId("rf-controls")).toHaveAttribute(
       "data-position",
       "bottom-right"
     );
@@ -149,11 +154,11 @@ describe("PersonGraph", () => {
       isLoading: false,
       isError: false,
     };
-    render(<PersonGraph id={2} />);
+
+    const { getByText } = render(<PersonGraph id={2} />);
+
     expect(
-      screen.getByText(
-        /No starships for this character in the available data\./i
-      )
+      getByText(/No starships for this character in the available data\./i)
     ).toBeInTheDocument();
   });
 });
